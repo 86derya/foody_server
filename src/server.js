@@ -47,7 +47,7 @@ const startServer = port => {
     .disable("etag") //disables 304
     .use(errorHandler);
 
-  http.createServer(app).listen(hostedAt);
+  http.createServer(app).listen(port);
 
   console.log("Server is running at http://localhost:" + port);
 };
