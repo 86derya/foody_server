@@ -31,6 +31,8 @@ const options = {
   cert: fs.readFileSync(path.join(__dirname, "./ssl/server.crt"))
 };
 
+const hostedAt = "https://foodydederiaserver.herokuapp.com/";
+
 const startServer = port => {
   app
     // .options("*", cors())
@@ -45,7 +47,7 @@ const startServer = port => {
     .disable("etag") //disables 304
     .use(errorHandler);
 
-  http.createServer(app).listen(port);
+  http.createServer(app).listen(hostedAt);
 
   console.log("Server is running at http://localhost:" + port);
 };
