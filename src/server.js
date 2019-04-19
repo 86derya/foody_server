@@ -32,6 +32,7 @@ const options = {
 };
 
 const hostedAt = "https://foodydederiaserver.herokuapp.com/";
+const PORT = process.env.PORT || port;
 
 const startServer = port => {
   app
@@ -47,9 +48,9 @@ const startServer = port => {
     .disable("etag") //disables 304
     .use(errorHandler);
 
-  http.createServer(app).listen(port);
+  http.createServer(app).listen(PORT);
 
-  console.log("Server is running at http://localhost:" + port);
+  console.log("Server is running at http://localhost:" + PORT);
 };
 
 module.exports = startServer;
