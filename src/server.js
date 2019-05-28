@@ -32,7 +32,7 @@ const options = {
 };
 
 const hostedAt = "https://foodydederiaserver.herokuapp.com/";
-const PORT = process.env.PORT || port;
+const PORT = process.env.PORT || config.port;
 
 const startServer = port => {
   app

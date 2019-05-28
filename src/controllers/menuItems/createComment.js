@@ -18,7 +18,8 @@ const createComment = (request, response) => {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: false
+    hour12: false,
+    timeZone: "UTC"
   };
 
   // let now = new Date();
@@ -43,7 +44,7 @@ const createComment = (request, response) => {
       if (error) {
         console.log(error), productUpdateFailed(response);
       } else {
-        productUpdateSuccess(response, product);
+        console.log(newComment), productUpdateSuccess(response, product);
       }
     }
   );

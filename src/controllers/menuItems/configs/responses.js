@@ -32,7 +32,7 @@ module.exports = {
     response.json({ status: "failed", menuItem: [] });
   },
   createdSuccess: function(response, menuItem) {
-    response.status(200);
+    response.status(201);
     response.json({ status: "success", menuItem: menuItem });
   },
   createdFailed: function(response, err) {
