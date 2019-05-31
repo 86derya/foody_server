@@ -36,8 +36,8 @@ module.exports = {
     response.json({ status: "success", menuItem: menuItem });
   },
   createdFailed: function(response, err) {
-    response.status(404);
-    response.json({ status: "failed", menuItem: err });
+    // response.status(400);
+    response.json({ status: "failed", message: err });
   },
   productUpdateSuccess: function(response, menuItem) {
     response.status(200);

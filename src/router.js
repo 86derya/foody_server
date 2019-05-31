@@ -23,7 +23,10 @@ const {
   getProducts,
   getProductById
 } = require("./controllers/products/");
-const { createIngredient } = require("./controllers/ingredients/");
+const {
+  createIngredient,
+  getAllIngredients
+} = require("./controllers/ingredients/");
 
 const { createOrder, getOrderById } = require("./controllers/orders");
 const { getComments } = require("./controllers/comments");
@@ -38,6 +41,7 @@ apiRoutes
   .get("/menu", getMenuItems)
   .get("/menu/:id", getMenuItemById)
   .get("/categories", getAllCategories)
+  .get("/ingredients", getAllIngredients)
   .put("/menu/:id/comments", createComment)
   .get("/", mainRoute)
   .get("/users", getUsers)
