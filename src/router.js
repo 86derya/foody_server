@@ -37,7 +37,7 @@ const apiRoutes = express.Router();
 apiRoutes
   .post("/auth/login", login)
   .post("/auth/register", signUp)
-  .post("/menu", createMenuItem)
+  .post("/menu", createMenuItem())
   .get("/menu", getMenuItems)
   .get("/menu/:id", getMenuItemById)
   .get("/categories", getAllCategories)
