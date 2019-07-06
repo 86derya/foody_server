@@ -37,7 +37,7 @@ const optimizeImagefromUrl = (fileurl, destination) => {
           console.log("no file");
           rej(err);
         }
-        res((filePath = destination + "/" + files.split(",")[1]));
+        res((filePath = destination + "/" + files[1]));
       });
     });
   };
@@ -76,7 +76,8 @@ const optimizeImagefromFile = (fileObject, from, to) => {
           rej(err);
           throw err;
         }
-        if (files) res((filePath = to + "/" + files.split(".")[1]));
+
+        res((filePath = to + "/" + files[1]));
       });
     });
   };
