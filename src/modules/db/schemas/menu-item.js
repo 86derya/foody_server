@@ -12,7 +12,7 @@ const menuItemSchema = new Schema({
   id: ObjectId,
   name: { type: String, required: true, unique: true },
   description: String,
-  image: String,
+  image: { data: Buffer, contentType: String },
   price: Number,
   currency: String,
   category: [

@@ -1,8 +1,9 @@
 const path = require("path");
+const fs = require("fs");
 const multer = require("multer");
+
 const MENU_ITEM = require("../../modules/db/schemas/menu-item");
-const INGREDIENT = require("../../modules/db/schemas/ingredient");
-// const { createIngredient } = require("../ingredients/createIngredient");
+const { createdFailed, createdSuccess } = require("./configs/responses");
 const {
   getNames,
   getIds,
@@ -11,11 +12,11 @@ const {
   getNotExistIngredients,
   getExistIngredientsIds
 } = require("./helpers/handleIngredients");
-
 const {
   optimizeImagefromFile,
   optimizeImagefromUrl
 } = require("./helpers/optimizeImg");
+
 const folderPathes = {
   original: path.join(__dirname, "tmp"),
   optimized: path.join(__dirname, "tmp/optimized")
@@ -36,36 +37,40 @@ const storage = multer.diskStorage({
 // Применяем настройки
 const upload = multer({ storage });
 
-const { createdFailed, createdSuccess } = require("./configs/responses");
-
 const createMenuItem = (request, response) => {
   const menuItem = request.body;
   const imgFile = request.file;
   const imgUrl = request.body.imageUrl;
-  imgFile
-    ? optimizeImagefromFile(
-        imgFile,
-        folderPathes.original,
-        folderPathes.optimized
-      ).then(() =>
-        console.log("FileObject optimized by Tinify: " + imgFile.originalname)
-      )
-    : optimizeImagefromUrl(imgUrl, folderPathes.optimized);
-
-  // console.log("menuItem:  " + menuItem);
-  console.log("requestformdata:  " + request.body.name);
-  console.log({ ...menuItem });
-
-  let dbIngredientsEntities = [];
-  let dbIngredientsNames = [];
   let existIngrIds = [];
   let notExistIngrNames = [];
-  const clientIngrlist = [...menuItem.selectedIngredients];
+  const clientIngrlist = menuItem.selectedIngredients.split(",");
   let createdIngrds = [];
   let jointListIds = [];
   let newMenuItem = {};
-  console.log(clientIngrlist);
-  getAllIngredientsEntitiesFromDb()
+  let imagePath = "";
+
+  const compressImage = () =>
+    new Promise((resolve, reject) => {
+      if (imgUrl) {
+        resolve(optimizeImagefromUrl(imgUrl, folderPathes.optimized));
+      } else if (imgFile) {
+        resolve(
+          optimizeImagefromFile(
+            imgFile,
+            folderPathes.original,
+            folderPathes.optimized
+          )
+        );
+      } else {
+        resolve();
+      }
+    });
+
+  compressImage()
+    .then(savedImagePath => {
+      imagePath = savedImagePath;
+    })
+    .then(() => getAllIngredientsEntitiesFromDb())
     .then(resp => {
       dbIngredientsEntities = resp;
       dbIngredientsNames = getNames(resp);
@@ -79,22 +84,47 @@ const createMenuItem = (request, response) => {
         )
       );
     })
-    .then(() => {
+    .then(async () => {
       jointListIds = [...existIngrIds, ...getIds(createdIngrds)];
-      newMenuItem = { ...menuItem, ingredients: jointListIds };
+      newMenuItem = {
+        ...menuItem,
+        ingredients: jointListIds
+      };
+      imagePath
+        ? (newMenuItem.image = {
+            data: await fs.readFileSync(imagePath),
+            contentType: "image/png"
+          })
+        : null;
     })
     .then(() => {
-      console.log("newMenuItem", newMenuItem),
-        MENU_ITEM.create(newMenuItem, (err, createdItem) => {
-          if (err) {
-            // console.log(err);
-            createdFailed(response, err.message);
-            // throw new Error(err);
-          } else {
-            createdSuccess(response, createdItem);
-          }
-        });
+      return MENU_ITEM.create(newMenuItem, (err, createdItem) => {
+        if (err) {
+          console.log(err);
+          imagePath
+            ? fs.unlink(imagePath, function(err) {
+                if (err) throw err;
+                console.log("File deleted!");
+                return createdFailed(response, err.message || err);
+              })
+            : createdFailed(response, err.message || err);
+          throw err;
+        }
+        return imagePath
+          ? fs.unlink(imagePath, function(err) {
+              if (err) throw err;
+              console.log("File deleted!");
+              console.log(" item created");
+              return createdSuccess(response, createdItem);
+            })
+          : createdSuccess(response, createdItem);
+      });
     })
-    .catch(err => createdFailed(response, err.message));
+    .catch(err => {
+      console.log(err);
+      // fs.unlinkSync(imagePath);
+      createdFailed(response, err.message);
+    });
 };
+
 module.exports = () => [upload.single("imageFile"), createMenuItem];
