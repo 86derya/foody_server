@@ -76,7 +76,7 @@ const optimizeImagefromFile = (fileObject, from, to) => {
           rej(err);
           throw err;
         }
-        if (file) res((filePath = to + "/" + files.split(".")[1]));
+        if (files) res((filePath = to + "/" + files.split(".")[1]));
       });
     });
   };
