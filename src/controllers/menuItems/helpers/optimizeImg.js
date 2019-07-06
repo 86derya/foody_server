@@ -32,12 +32,12 @@ const optimizeImagefromUrl = (fileurl, destination) => {
 
   const getFilePath = () => {
     return new Promise((res, rej) => {
-      fs.readdir(destination, function(err, file) {
+      fs.readdir(destination, function(err, files) {
         if (err) {
           console.log("no file");
           rej(err);
         }
-        res((filePath = destination + "/" + file));
+        res((filePath = destination + "/" + files.split(",")[1]));
       });
     });
   };
@@ -70,13 +70,13 @@ const optimizeImagefromFile = (fileObject, from, to) => {
 
   const getFilePath = () => {
     return new Promise((res, rej) => {
-      fs.readdir(to, function(err, file) {
+      fs.readdir(to, function(err, files) {
         if (err) {
           console.log("no file");
           rej(err);
           throw err;
         }
-        if (file) res((filePath = to + "/" + file));
+        if (file) res((filePath = to + "/" + files.split(",")[1]));
       });
     });
   };
