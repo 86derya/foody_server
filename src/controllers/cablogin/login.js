@@ -7,7 +7,7 @@ const {
 
 const cablogin = (request, response) => {
   const { login, password } = request.body;
-  console.log(request.body);
+  console.log("request.body :" + request.body);
 
   var settings = {
     async: true,

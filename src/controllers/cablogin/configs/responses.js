@@ -13,11 +13,11 @@ module.exports = {
       token: null
     });
   },
-  userCreatedSuccess: function(response, user) {
+  configsSuccess: function(response, configs) {
     response.status(200);
-    response.json({ status: "success", user: user });
+    response.json({ status: "success", configs: configs });
   },
-  userCreatedFail: function(response, reason = "User creation failed") {
+  configsFail: function(response, reason = "No access to configs") {
     // response.status(400);
     response.json({
       status: "failed",
