@@ -24,7 +24,9 @@ const cablogin = (request, response) => {
   // axios.defaults.headers.common.Authorization = null;
 
   return axios(settings).then(resp =>
-    authenticationSuccess(response, resp.data)
+    authenticationSuccess(response, resp.data).catch(err =>
+      authenticationFailed(response, err.message + " : Incorrect Credentials")
+    )
   );
 
   // function onFind(err, user) {
