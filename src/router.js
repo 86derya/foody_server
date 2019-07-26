@@ -31,10 +31,12 @@ const {
 const { createOrder, getOrderById } = require("./controllers/orders");
 const { getComments } = require("./controllers/comments");
 const { getAllCategories } = require("./controllers/categories");
+const cablogin = require("./controllers/cablogin/login");
 
 const apiRoutes = express.Router();
 
 apiRoutes
+  .post("/cab/auth", cablogin)
   .post("/auth/login", login)
   .post("/auth/register", signUp)
   .post("/menu", createMenuItem())
